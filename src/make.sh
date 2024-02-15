@@ -7,7 +7,7 @@ time_to_eat=200
 time_to_sleep=100
 num_iterations=7
 													#num die eat slp
-gcc phillosophers.c -pthread -o philo -fsanitize=address && ./philo 200 410 200 200
+gcc -Wall -Werror -Wextra -fsanitize=address phillosophers.c -pthread -o philo && ./philo 100 410 200 200
 
 
 
