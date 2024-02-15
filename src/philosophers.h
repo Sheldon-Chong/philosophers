@@ -11,6 +11,8 @@
 #define MSG_FORK "has taken a fork"
 #define MSG_DEAD "died"
 
+
+
 typedef struct s_philo	t_philo;
 
 typedef struct s_session
@@ -47,36 +49,10 @@ typedef struct s_supervisor
 	int				i;
 }	t_supervisor;
 
-
-int	ft_atoi(char *c)
-{
-	int	i;
-	int	ret;
-
-	ret = 0;
-	i = -1;
-	while (c[++i])
-	{
-		ret *= 10;
-		ret += c[i] - '0';
-	}
-	return (ret);
-}
-
-unsigned long long	get_time_milisec(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
-}
-
-void	ft_usleep(unsigned long long milisec)
-{
-	unsigned long long	start;
-
-	start = 0;
-	start = get_time_milisec();
-	while (get_time_milisec() < (milisec + start))
-		usleep(100);
-}
+void				print_message(char *msg, t_philo *philo,
+						t_session *session);
+void				*reaper_thread(void *data);
+void				*thread_function(void *arg);
+int					ft_atoi(char *c);
+unsigned long long	get_time_milisec(void);
+int					ft_usleep(unsigned long long milisec);
