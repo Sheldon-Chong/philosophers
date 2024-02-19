@@ -1,5 +1,16 @@
-#include "philosophers.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/19 10:36:18 by shechong          #+#    #+#             */
+/*   Updated: 2024/02/19 19:36:30 by shechong         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "philosophers.h"
 
 int	ft_atoi(char *c)
 {
@@ -8,8 +19,12 @@ int	ft_atoi(char *c)
 
 	ret = 0;
 	i = -1;
+	if (c[0] == '-')
+		exit(printf("Error: %s: Negative value not accepted\n", c));
 	while (c[++i])
 	{
+		if (!(c[i] >= '0' && c[i] <= '9'))
+			exit(printf("Error: Invalid character found\n"));
 		ret *= 10;
 		ret += c[i] - '0';
 	}
@@ -32,5 +47,5 @@ int	ft_usleep(unsigned long long milisec)
 	start = get_time_milisec();
 	while (get_time_milisec() < (milisec + start))
 		usleep(100);
-	return(1);
+	return (1);
 }

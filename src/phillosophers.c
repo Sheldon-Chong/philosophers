@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   phillosophers.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
+/*   Updated: 2024/02/19 19:36:31 by shechong         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
 void	print_message(char *msg, t_philo *philo, t_session *session)
@@ -15,8 +27,8 @@ void	print_message(char *msg, t_philo *philo, t_session *session)
 
 t_philo	*create_philos(int count, t_session *session)
 {
-	int			i;
-	t_philo		*philos;
+	int		i;
+	t_philo	*philos;
 
 	if (count < 1)
 		return (NULL);
@@ -29,7 +41,7 @@ t_philo	*create_philos(int count, t_session *session)
 	{
 		philos[i] = (t_philo){&session->pid[i], i + 1, 0,
 			get_time_milisec() + session->time_to_die,
-			&session->forks[(i + 1) % count], &session->forks[i],
+			&session->forks[i], &session->forks[(i + 1) % count],
 			session, {0, {0}}, };
 		pthread_mutex_init(&philos[i].eat_lock, NULL);
 		pthread_create(&session->pid[i], NULL,
@@ -46,6 +58,11 @@ t_session	*program_init(int ac, char **av)
 	session = malloc(sizeof(t_session));
 	*session = (t_session){ft_atoi(av[1]), ft_atoi(av[2]), ft_atoi(av[3]),
 		ft_atoi(av[4]), 0, get_time_milisec(), {0, {0}}, {0, {0}}, 0, 0, 0, 0};
+	if (session->time_to_sleep < 0 || session->time_to_die < 0
+		|| session->time_to_eat < 0)
+		exit(printf("Error: Negative value found\n"));
+	if (session->num_philos < 1)
+		exit(printf("Error: Must have atleast 1 philo\n"));
 	session->program_status = '\0';
 	session->forks = malloc((session->num_philos + 1)
 			* sizeof(pthread_mutex_t));
@@ -60,7 +77,7 @@ t_session	*program_init(int ac, char **av)
 	return (session);
 }
 
-void	end_simulation(t_session *session)
+void	cleanup(t_session *session)
 {
 	int	i;
 
@@ -85,7 +102,7 @@ int	main(int ac, char **av)
 	if (ac > 4)
 		session = program_init(ac, av);
 	else
-		return (printf("error\n"), 1);
+		return (printf("Error: Not enough arguments\n"), 1);
 	pthread_mutex_lock(&(session->go_lock));
 	session->philos = create_philos(session->num_philos, session);
 	reaper = malloc(sizeof(pthread_t));
@@ -95,4 +112,5 @@ int	main(int ac, char **av)
 	while (++i < session->num_philos)
 		pthread_join(*(((t_philo *)session->philos)[i].pid), NULL);
 	pthread_join(*reaper, NULL);
+	cleanup(session);
 }

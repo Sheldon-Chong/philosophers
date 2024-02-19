@@ -1,17 +1,30 @@
-#include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <stdbool.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
+/*   Updated: 2024/02/19 19:32:12 by shechong         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define MSG_SLEEPING "is sleeping"
-#define MSG_EATING "is eating"
-#define MSG_THINKING "is thinking"
-#define MSG_FORK "has taken a fork"
-#define MSG_DEAD "died"
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 
+# include <stdio.h>
+# include <pthread.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <stdbool.h>
 
+# define MSG_SLEEPING "is sleeping"
+# define MSG_EATING "is eating"
+# define MSG_THINKING "is thinking"
+# define MSG_FORK "has taken a fork"
+# define MSG_DEAD "died"
 
 typedef struct s_philo	t_philo;
 
@@ -43,12 +56,6 @@ typedef struct s_philo
 	pthread_mutex_t		eat_lock;
 }	t_philo;
 
-typedef struct s_supervisor
-{
-	pthread_t		*pid;
-	int				i;
-}	t_supervisor;
-
 void				print_message(char *msg, t_philo *philo,
 						t_session *session);
 void				*reaper_thread(void *data);
@@ -56,3 +63,5 @@ void				*thread_function(void *arg);
 int					ft_atoi(char *c);
 unsigned long long	get_time_milisec(void);
 int					ft_usleep(unsigned long long milisec);
+
+#endif

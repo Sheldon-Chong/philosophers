@@ -6,8 +6,8 @@ time_to_die=310
 time_to_eat=200
 time_to_sleep=100
 num_iterations=7
-													#num die eat slp
-gcc -Wall -Werror -Wextra -fsanitize=address *.c -pthread -o philo && ./philo 4 310 200 100
+
+gcc -Wall -Werror -Wextra *.c -pthread -o philo && Leaks -atExit -- ./philo 2 100 200 200
 
 
 

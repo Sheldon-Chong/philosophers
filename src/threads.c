@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   threads.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/19 10:36:27 by shechong          #+#    #+#             */
+/*   Updated: 2024/02/19 19:36:29 by shechong         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
 void	*reaper_loop(t_session *session)
@@ -38,7 +50,7 @@ void	*reaper_thread(void *data)
 	return (NULL);
 }
 
-int	philo_eat(t_philo *philo)
+int	philo_life(t_philo *philo)
 {
 	pthread_mutex_lock(philo->fork_right);
 	print_message(MSG_FORK, philo, philo->session);
@@ -46,8 +58,8 @@ int	philo_eat(t_philo *philo)
 	print_message(MSG_FORK, philo, philo->session);
 	philo->eat_count++;
 	print_message(MSG_EATING, philo, philo->session);
-	if (philo->session->num_philo_must_eat > 0 &&
-		philo->eat_count > philo->session->num_philo_must_eat)
+	if (philo->session->num_philo_must_eat > 0
+		&& philo->eat_count > philo->session->num_philo_must_eat)
 	{
 		pthread_mutex_unlock(philo->fork_left);
 		pthread_mutex_unlock(philo->fork_right);
@@ -75,7 +87,7 @@ void	*thread_function(void *arg)
 	pthread_mutex_lock(&philo->session->go_lock);
 	pthread_mutex_unlock(&philo->session->go_lock);
 	if (philo->id % 2 != 0)
-		ft_usleep(philo->session->time_to_eat);
+		ft_usleep(200);
 	pthread_mutex_lock(&(philo->session->die_lock));
 	philo->time_to_die = get_time_milisec() + philo->session->time_to_die;
 	pthread_mutex_unlock(&(philo->session->die_lock));
@@ -88,7 +100,7 @@ void	*thread_function(void *arg)
 			break ;
 		}
 		pthread_mutex_unlock(&(philo->session->die_lock));
-		if (philo_eat(philo))
+		if (philo_life(philo))
 			break ;
 	}
 	return (NULL);
