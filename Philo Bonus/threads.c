@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:27 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 19:36:29 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/20 11:03:56 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,16 @@ void	*reaper_thread(void *data)
 	session = (t_session *)data;
 	pthread_mutex_lock(&session->go_lock);
 	pthread_mutex_unlock(&session->go_lock);
+
+	if (session->num_philos == 1)
+	{
+		print_message(MSG_FORK, &session->philos[0], session);
+		while (get_time_milisec() < session->philos[0].time_to_die)
+		{
+		}
+		return (print_message(MSG_DEAD,
+				&session->philos[0], session), NULL);
+	}
 	reaper_loop(session);
 	return (NULL);
 }
@@ -79,15 +89,18 @@ int	philo_life(t_philo *philo)
 	return (print_message(MSG_THINKING, philo, philo->session), 0);
 }
 
-void	*thread_function(void *arg)
+void	*philo_thread(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
 	pthread_mutex_lock(&philo->session->go_lock);
 	pthread_mutex_unlock(&philo->session->go_lock);
+
+	if (philo->session->num_philos == 1)
+		return (NULL);
 	if (philo->id % 2 != 0)
-		ft_usleep(200);
+		ft_usleep(philo->session->time_to_eat);
 	pthread_mutex_lock(&(philo->session->die_lock));
 	philo->time_to_die = get_time_milisec() + philo->session->time_to_die;
 	pthread_mutex_unlock(&(philo->session->die_lock));
@@ -95,10 +108,7 @@ void	*thread_function(void *arg)
 	{
 		pthread_mutex_lock(&(philo->session->die_lock));
 		if (philo->session->program_status != 0)
-		{
-			pthread_mutex_unlock(&(philo->session->die_lock));
-			break ;
-		}
+			return (pthread_mutex_unlock(&(philo->session->die_lock)), NULL);
 		pthread_mutex_unlock(&(philo->session->die_lock));
 		if (philo_life(philo))
 			break ;

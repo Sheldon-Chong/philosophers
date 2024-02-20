@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 19:32:12 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/20 12:24:36 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <stdbool.h>
+# include <semaphore.h>
+# include <fcntl.h>
+#include <errno.h> 
+#include <signal.h>
 
 # define MSG_SLEEPING "is sleeping"
 # define MSG_EATING "is eating"
@@ -40,8 +44,8 @@ typedef struct s_session
 	pthread_mutex_t		die_lock;
 	char				program_status;
 	t_philo				*philos;
-	pthread_mutex_t		*forks;
-	pthread_t			*pid;
+	sem_t				*forks;
+	sem_t				*death_lock;
 }	t_session;
 
 typedef struct s_philo
@@ -59,7 +63,7 @@ typedef struct s_philo
 void				print_message(char *msg, t_philo *philo,
 						t_session *session);
 void				*reaper_thread(void *data);
-void				*thread_function(void *arg);
+void				*philo_thread(void *arg);
 int					ft_atoi(char *c);
 unsigned long long	get_time_milisec(void);
 int					ft_usleep(unsigned long long milisec);

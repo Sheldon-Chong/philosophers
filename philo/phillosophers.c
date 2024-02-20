@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 20:08:28 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/20 10:52:33 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,11 @@ t_session	*program_init(int ac, char **av)
 	int			i;
 
 	session = malloc(sizeof(t_session));
-	*session = (t_session){ft_atoi(av[1]), ft_atoi(av[2]), ft_atoi(av[3]),
-		ft_atoi(av[4]), 0, get_time_milisec(), {0, {0}}, {0, {0}}, 0, 0, 0, 0};
-	if (session->time_to_sleep < 0 || session->time_to_die < 0
-		|| session->time_to_eat < 0)
-		exit(printf("Error: Negative value found\n"));
+	session->num_philos = ft_atoi(av[1]);
+	session->time_to_die = ft_atoi(av[2]);
+	session->time_to_eat = ft_atoi(av[3]);
+	session->time_to_die = ft_atoi(av[4]);
+	session->start_time = get_time_milisec();
 	if (session->num_philos < 1)
 		exit(printf("Error: Must have atleast 1 philo\n"));
 	session->program_status = '\0';
