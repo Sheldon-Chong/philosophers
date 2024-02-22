@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/20 12:25:01 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/22 12:30:35 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ void	print_message(char *msg, t_philo *philo, t_session *session)
 
 	sem_wait(philo->session->death_lock);
 	time_elapsed = get_time_milisec() - session->start_time;
-	
-		printf("%llu %d %s\n", time_elapsed, philo->id, msg);
+	printf("%llu %d %s\n", time_elapsed, philo->id, msg);
 	sem_post(philo->session->death_lock);
 }
 
@@ -29,83 +28,95 @@ void* thread_reaper(void* arg)
 
 	while (ft_usleep(10))
 	{
-		pthread_mutex_lock(&philo->eat_lock);
+		sem_wait(philo->session->death_lock);
+		if(philo->session->program_status == 'f')
+			exit(0);
 		if (get_time_milisec() > philo->time_to_die)
 		{
-			sem_wait(philo->session->death_lock);
 			philo->session->program_status = 'd';
-			sem_post(philo->session->death_lock);
-			pthread_mutex_unlock(&philo->eat_lock);
-			return(NULL);
+			printf("%llu %d %s\n", get_time_milisec()
+				- philo->session->start_time, philo->id, MSG_DEAD);
+			exit(0);
 		}
-		pthread_mutex_unlock(&philo->eat_lock);
+		sem_post(philo->session->death_lock);
 	}
-	return NULL;
+	return (NULL);
+}
+
+void philo(int pid, t_session *session, int i)
+{
+	t_philo	philo;
+	pthread_t thread;
+	
+	pthread_create(&thread, NULL, thread_reaper, &philo);
+	pthread_detach(thread);
+	philo.id = i + 1;
+	philo.eat_count = 0;
+	philo.session = session;
+	philo.time_to_die = get_time_milisec() + session->time_to_die;
+	while (1)
+	{
+		sem_wait(session->forks);
+		print_message(MSG_FORK, &philo, session);
+		sem_wait(session->forks);
+		print_message(MSG_FORK, &philo, session);
+		print_message(MSG_EATING, &philo, session);
+		sem_wait(philo.session->death_lock);
+		philo.eat_count ++;
+		philo.time_to_die = get_time_milisec() + session->time_to_die;
+		if (philo.eat_count >= session->num_philo_must_eat)
+		{
+			philo.session->program_status = 'f';
+			exit(2);
+		}
+		sem_post(philo.session->death_lock);
+		ft_usleep(session->time_to_eat);
+		sem_post(session->forks);
+		sem_post(session->forks);
+		print_message(MSG_SLEEPING, &philo, session);
+		ft_usleep(session->time_to_sleep);
+		print_message(MSG_THINKING, &philo, session);
+	}
+	exit(1);
+}
+
+void parent(int	philo_pid[200], t_session *session)
+{
+	int		i;
+	int		status;
+	pid_t	term_pid;
+	
+	term_pid = waitpid(-1, &status, 0);
+
+	i = -1;
+	if (WEXITSTATUS(status) == 1)
+	{
+		i = -1;
+		while(++i < session->num_philos)
+			kill(philo_pid[i], SIGKILL);
+	}
+	i = -1;
 }
 
 void *create_philos(int count, t_session *session)
 {
-	int		i;
-	
-	
+	int	i;
 	int	pid;
-	int philo_pid[200];
+	int	philo_pid[200];
 	
 	i = -1;
 	while(++i < session->num_philos)
 	{
 		pid = fork();
 		if (pid != 0)
-		{
 			philo_pid[i] = pid;
-		}
-		else if (pid == 0)
-		{
-			t_philo	philo;
-			pthread_t thread;
-			pthread_create(&thread, NULL, thread_reaper, &philo);
-			philo.id = i + 1;
-			philo.eat_count = 0;
-			philo.session = session;
-			philo.time_to_die = get_time_milisec() + session->time_to_die;
-			pthread_mutex_init(&philo.eat_lock, NULL);
-			while(1)
-			{
-				
-				sem_wait(session->death_lock);
-				if(session->program_status == 'd')
-					{sem_post(session->death_lock);break;}
-				sem_post(session->death_lock);
-				sem_wait(session->forks);
-				print_message(MSG_FORK, &philo, session);
-				sem_wait(session->forks);
-				print_message(MSG_FORK, &philo, session);
-				pthread_mutex_lock(&philo.eat_lock);
-				philo.time_to_die = get_time_milisec() + session->time_to_die;
-				pthread_mutex_unlock(&philo.eat_lock);
-				ft_usleep(session->time_to_eat);
-				sem_post(session->forks);
-				sem_post(session->forks);
-				print_message(MSG_SLEEPING, &philo, session);
-				ft_usleep(session->time_to_sleep);
-				print_message(MSG_THINKING, &philo, session);
-			}
-			pthread_join(thread, NULL);
-			printf("ended\n");
-			return(NULL);
-		}
-		
+		else
+			break;
 	}
-	/*
-	
-	KILL processes here
-	
-	*/
-
-	i = -1;
-	while(++i < session->num_philos)
-		{printf(">> %d\n", philo_pid[i]);
-		kill(philo_pid[i], SIGKILL);}
+	if (pid == 0)
+		philo(pid, session, i);
+	else
+		parent(philo_pid, session);
 	return (NULL);
 }
 
@@ -118,7 +129,7 @@ t_session	*program_init(int ac, char **av)
 	session->num_philos = ft_atoi(av[1]);
 	session->time_to_die = ft_atoi(av[2]);
 	session->time_to_eat = ft_atoi(av[3]);
-	session->time_to_die = ft_atoi(av[4]);
+	session->time_to_sleep = ft_atoi(av[4]);
 	session->start_time = get_time_milisec();
 	if (session->num_philos < 1)
 		exit(printf("Error: Must have atleast 1 philo\n"));
@@ -129,18 +140,6 @@ t_session	*program_init(int ac, char **av)
 	return (session);
 }
 
-void	cleanup(t_session *session)
-{
-	int	i;
-
-	i = -1;
-	free(session->philos);
-	pthread_mutex_destroy(&session->die_lock);
-	pthread_mutex_destroy(&session->go_lock);
-	free(session);
-	exit(0);
-}
-
 int main(int ac, char **av) {
 	t_session *session;
 
@@ -148,22 +147,15 @@ int main(int ac, char **av) {
 		session = program_init(ac, av);
 	else
 		return (printf("Error: Not enough arguments\n"), 1);
-	sem_unlink("deat_lock");
-	session->death_lock = sem_open("deat_lock", O_CREAT | O_EXCL, 0666, 1);
-	
+	sem_unlink("death_lock");
+	session->death_lock = sem_open("death_lock", O_CREAT | O_EXCL, 0666, 1);
 	sem_unlink("forks");
 	session->forks = sem_open("forks", O_CREAT, 0666, session->num_philos);
-
 	create_philos(session->num_philos, session);
-
-	ft_usleep(10000);
 	sem_close(session->death_lock);
 	sem_close(session->forks);
-
 	sem_unlink("hello");
 	sem_unlink("fork");
-
-	cleanup(session);
-
+	free(session);
 	return 0;
 }
