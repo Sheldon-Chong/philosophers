@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:27 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 20:20:16 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:25:19 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,10 @@ int	philo_life(t_philo *philo)
 	print_message(MSG_FORK, philo, philo->session);
 	pthread_mutex_lock(philo->fork_left);
 	print_message(MSG_FORK, philo, philo->session);
-	philo->eat_count++;
+	philo->eat_done++;
 	print_message(MSG_EATING, philo, philo->session);
 	if (philo->session->num_philo_must_eat > 0
-		&& philo->eat_count > philo->session->num_philo_must_eat)
+		&& philo->eat_done > philo->session->num_philo_must_eat)
 	{
 		pthread_mutex_unlock(philo->fork_left);
 		pthread_mutex_unlock(philo->fork_right);

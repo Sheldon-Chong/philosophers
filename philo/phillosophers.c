@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/20 10:52:33 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 10:54:41 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_philo	*create_philos(int count, t_session *session)
 	{
 		philos[i].pid = &session->pid[i];
 		philos[i].id = i + 1;
-		philos[i].eat_count = 0;
+		philos[i].eat_done = 0;
 		philos[i].time_to_die = get_time_milisec() + session->time_to_die;
 		philos[i].fork_left = &session->forks[i];
 		philos[i].fork_right = &session->forks[(i + 1) % count];
@@ -62,7 +62,7 @@ t_session	*program_init(int ac, char **av)
 	session->num_philos = ft_atoi(av[1]);
 	session->time_to_die = ft_atoi(av[2]);
 	session->time_to_eat = ft_atoi(av[3]);
-	session->time_to_die = ft_atoi(av[4]);
+	session->time_to_sleep = ft_atoi(av[4]);
 	session->start_time = get_time_milisec();
 	if (session->num_philos < 1)
 		exit(printf("Error: Must have atleast 1 philo\n"));

@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 19:55:40 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 10:54:41 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_philo
 {
 	pthread_t			*pid;
 	int					id;
-	int					eat_count;
+	int					eat_done;
 	unsigned long long	time_to_die;
 	pthread_mutex_t		*fork_left;
 	pthread_mutex_t		*fork_right;
