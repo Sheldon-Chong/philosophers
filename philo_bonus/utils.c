@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:18 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 20:08:34 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:21:35 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,14 @@ int	ft_usleep(unsigned long long milisec)
 	while (get_time_milisec() < (milisec + start))
 		usleep(100);
 	return (1);
+}
+
+void	print_message(char *msg, t_philo *philo, t_session *session)
+{
+	unsigned long long	time_elapsed;
+
+	sem_wait(philo->session->death_lock);
+	time_elapsed = get_time_milisec() - session->start_time;
+	printf("%llu %d %s\n", time_elapsed, philo->id, msg);
+	sem_post(philo->session->death_lock);
 }

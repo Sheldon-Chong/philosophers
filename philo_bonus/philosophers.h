@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/22 20:22:40 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:23:14 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <stdbool.h>
 # include <semaphore.h>
 # include <fcntl.h>
-#include <errno.h> 
-#include <signal.h>
+# include <errno.h> 
+# include <signal.h>
 
 # define MSG_SLEEPING "is sleeping"
 # define MSG_EATING "is eating"
@@ -40,20 +40,21 @@ typedef struct s_session
 	int					time_to_sleep;
 	int					num_philo_must_eat;
 	unsigned long long	start_time;
-	pthread_mutex_t		go_lock;
-	pthread_mutex_t		die_lock;
+	sem_t				*go_lock;
 	char				program_status;
 	t_philo				*philos;
 	sem_t				*forks;
 	sem_t				*death_lock;
 	sem_t				*eat_lock;
+	sem_t				*eat_done;
+	int					*philo_pid;
 }	t_session;
 
 typedef struct s_philo
 {
-	pthread_t			*pid;
+	int					pid;
 	int					id;
-	int					eat_count;
+	int					eat_done;
 	unsigned long long	time_to_die;
 	pthread_mutex_t		*fork_left;
 	pthread_mutex_t		*fork_right;
@@ -63,8 +64,8 @@ typedef struct s_philo
 
 void				print_message(char *msg, t_philo *philo,
 						t_session *session);
-void				*reaper_thread(void *data);
-void				*philo_thread(void *arg);
+void				*thread_reaper(void *arg);
+void				philo(int pid, t_session *session, int i);
 int					ft_atoi(char *c);
 unsigned long long	get_time_milisec(void);
 int					ft_usleep(unsigned long long milisec);
