@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:18 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/19 20:08:34 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 13:11:57 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_atoi(char *c)
 	while (c[++i])
 	{
 		if (!(c[i] >= '0' && c[i] <= '9'))
-			exit(printf("Error: Invalid character found\n"));
+			exit(printf("Error: %c: Invalid character found\n", c[i]));
 		ret *= 10;
 		ret += c[i] - '0';
 	}

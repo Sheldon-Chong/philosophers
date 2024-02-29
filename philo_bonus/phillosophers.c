@@ -6,37 +6,35 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/29 08:25:19 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/29 10:20:39 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+int	eat_checker(t_session *session)
+{
+	int	eat_dones;
+
+	eat_dones = 0;
+	ft_usleep(50);
+	while (1)
+	{
+		sem_wait(session->eat_done);
+		eat_dones ++;
+		if (eat_dones >= session->num_philos)
+			exit(sem_post(session->all_philos_must_die));
+	}
+}
+
 void	parent(int philo_pid[200], t_session *session)
 {
-	int			i;
-	int			status;
-	pid_t		term_pid;
-	pthread_t	eat_done;
+	int		i;
+	int		pid;
 
-	int pid = fork();
-	if(pid == 0)
-	{
-		int eat_dones = 0;
-		ft_usleep(50);
-		while (1)
-		{
-			//printf("------------------------------------------------------------------------------ eaten %d\n", eat_dones);
-			sem_wait(session->eat_done);
-			eat_dones ++;
-			if (eat_dones >= session->num_philos)
-			{
-				sem_post(session->all_philos_must_die);
-				break;
-			}
-		}
-		return ;
-	}
+	pid = fork();
+	if (pid == 0)
+		eat_checker(session);
 	else
 	{
 		session->philo_pid = philo_pid;
@@ -105,7 +103,8 @@ int	main(int ac, char **av)
 	sem_unlink("/forks");
 	sem_unlink("/eat_done");
 	sem_unlink("/all_philos_must_die");
-	session->all_philos_must_die = sem_open("/all_philos_must_die", O_CREAT, 0666, 1);
+	session->all_philos_must_die = sem_open(
+			"/all_philos_must_die", O_CREAT, 0666, 1);
 	sem_wait(session->all_philos_must_die);
 	session->go_lock = sem_open("/go_lock", O_CREAT, 0666, 1);
 	session->forks = sem_open("/forks", O_CREAT, 0666, session->num_philos);

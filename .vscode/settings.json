@@ -6,6 +6,8 @@
 		"pthread.h": "c",
 		"__mutex_base": "c",
 		"memory": "c",
-		"mutex": "c"
+		"mutex": "c",
+		"philo_bonus.h": "c",
+		"bitset": "c"
 	}
 }

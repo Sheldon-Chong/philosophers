@@ -1,5 +1,0 @@
-[philo_bonus-Test #2]: Given 4 410 200 200 arguments to philo_bonus, no philosopher should die !
-[philo_bonus-Test #4]: Given 4 410 200 200 7 arguments to philo_bonus, philo_bonus should only be stopped if each philosopher ate at least 7 times !
-[philo_bonus-Test #4]: Given 4 410 200 200 10 arguments to philo_bonus, philo_bonus should only be stopped if each philosopher ate at least 10 times !
-[philo_bonus-Test #4]: Given 4 410 200 200 12 arguments to philo_bonus, philo_bonus should only be stopped if each philosopher ate at least 12 times !
-[philo_bonus-Test #4]: Given 4 410 200 200 15 arguments to philo_bonus, philo_bonus should only be stopped if each philosopher ate at least 15 times !

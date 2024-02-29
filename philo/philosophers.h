@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/26 10:54:41 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/26 14:05:11 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,15 @@ typedef struct s_session
 	t_philo				*philos;
 	pthread_mutex_t		*forks;
 	pthread_t			*pid;
+	int					philos_eaten;
+	pthread_mutex_t		eat_done_lock;
 }	t_session;
 
 typedef struct s_philo
 {
 	pthread_t			*pid;
 	int					id;
-	int					eat_done;
+	int					eat_count;
 	unsigned long long	time_to_die;
 	pthread_mutex_t		*fork_left;
 	pthread_mutex_t		*fork_right;
@@ -56,7 +58,7 @@ typedef struct s_philo
 	pthread_mutex_t		eat_lock;
 }	t_philo;
 
-void				print_message(char *msg, t_philo *philo,
+void				print_msg(char *msg, t_philo *philo,
 						t_session *session);
 void				*reaper_thread(void *data);
 void				*philo_thread(void *arg);
