@@ -1,5 +1,5 @@
 CC := gcc									# Compiler
-CFLAGS := -pthread	-Wall -Werror -Wextra	# Compiler flags
+CFLAGS := -pthread	-Wall -Werror -Wextra -fsanitize=thread# Compiler flags
 SRCS :=  $(wildcard *.c)					# Source files
 OBJS := $(SRCS:.c=.o)						# Object files
 TARGET := philo_bonus						# Executable name

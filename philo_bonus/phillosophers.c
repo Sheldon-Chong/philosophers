@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/29 10:20:39 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/29 20:06:24 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ int	main(int ac, char **av)
 	sem_unlink("/go_lock");
 	sem_unlink("/forks");
 	sem_unlink("/eat_done");
+	sem_unlink("/eat_lock");
+	session->eat_done = sem_open("/eat_lock", O_CREAT, 0666, 1);
 	sem_unlink("/all_philos_must_die");
 	session->all_philos_must_die = sem_open(
 			"/all_philos_must_die", O_CREAT, 0666, 1);
