@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:18 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/26 12:21:35 by shechong         ###   ########.fr       */
+/*   Updated: 2024/02/27 08:38:44 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_atoi(char *c)
 	while (c[++i])
 	{
 		if (!(c[i] >= '0' && c[i] <= '9'))
-			exit(printf("Error: Invalid character found\n"));
+			exit(printf("Error: %c: Invalid character found\n", c[i]));
 		ret *= 10;
 		ret += c[i] - '0';
 	}
@@ -50,7 +50,7 @@ int	ft_usleep(unsigned long long milisec)
 	return (1);
 }
 
-void	print_message(char *msg, t_philo *philo, t_session *session)
+void	print_msg(char *msg, t_philo *philo, t_session *session)
 {
 	unsigned long long	time_elapsed;
 

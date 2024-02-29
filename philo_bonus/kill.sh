@@ -1,0 +1,13 @@
+kill 84018 
+kill 83153 
+kill 83103 
+kill 83027 
+kill 83026 
+kill 83025 
+kill 84958 
+kill 84702 
+kill 84520 
+kill 84381 
+kill 84290 
+kill 84173 
+kill 84042 

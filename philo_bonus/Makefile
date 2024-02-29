@@ -1,8 +1,8 @@
 CC := gcc									# Compiler
-CFLAGS := -Wall -Werror -Wextra -pthread 	# Compiler flags
+CFLAGS := -pthread	# Compiler flags
 SRCS :=  $(wildcard *.c)					# Source files
 OBJS := $(SRCS:.c=.o)						# Object files
-TARGET := philo								# Executable name
+TARGET := philo_bonus								# Executable name
 
 all: $(TARGET)
 
