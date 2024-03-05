@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/03/05 09:05:36 by shechong         ###   ########.fr       */
+/*   Updated: 2024/03/05 09:25:51 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	parent(int philo_pid[200], t_session *session)
 	else
 	{
 		session->philo_pid = philo_pid;
-		sem_post(session->go_lock);
 		sem_wait(session->all_must_stop);
 		i = -1;
 		while (++i < session->num_philos)
