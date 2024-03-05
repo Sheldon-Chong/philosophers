@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:09 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/29 20:06:24 by shechong         ###   ########.fr       */
+/*   Updated: 2024/03/05 09:03:05 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	eat_checker(t_session *session)
 		sem_wait(session->eat_done);
 		eat_dones ++;
 		if (eat_dones >= session->num_philos)
-			exit(sem_post(session->all_philos_must_die));
+			exit(sem_post(session->all_must_stop));
 	}
 }
 
@@ -39,7 +39,7 @@ void	parent(int philo_pid[200], t_session *session)
 	{
 		session->philo_pid = philo_pid;
 		sem_post(session->go_lock);
-		sem_wait(session->all_philos_must_die);
+		sem_wait(session->all_must_stop);
 		i = -1;
 		while (++i < session->num_philos)
 			kill(session->philo_pid[i], SIGKILL);
@@ -53,7 +53,6 @@ void	*create_philos(t_session *session)
 	int	pid;
 	int	philo_pid[200];
 
-	sem_wait(session->go_lock);
 	i = -1;
 	while (++i < session->num_philos)
 	{
@@ -98,20 +97,16 @@ int	main(int ac, char **av)
 	else
 		return (printf("Error: Not enough arguments\n"), 1);
 	sem_unlink("death_lock");
-	session->death_lock = sem_open("death_lock", O_CREAT, 0666, 1);
-	sem_unlink("/go_lock");
 	sem_unlink("/forks");
 	sem_unlink("/eat_done");
-	sem_unlink("/eat_lock");
-	session->eat_done = sem_open("/eat_lock", O_CREAT, 0666, 1);
-	sem_unlink("/all_philos_must_die");
-	session->all_philos_must_die = sem_open(
-			"/all_philos_must_die", O_CREAT, 0666, 1);
-	sem_wait(session->all_philos_must_die);
-	session->go_lock = sem_open("/go_lock", O_CREAT, 0666, 1);
-	session->forks = sem_open("/forks", O_CREAT, 0666, session->num_philos);
-	session->eat_done = sem_open("/eat_done",
-			O_CREAT, 0666, session->num_philos);
+	sem_unlink("/all_must_stop");
+	session->death_lock = sem_open("death_lock", O_CREAT, 0644, 1);
+	session->eat_done = sem_open("/eat_lock", O_CREAT, 0644, 1);
+	session->all_must_stop = sem_open("/all_must_stop", O_CREAT, 0644, 1);
+	session->forks = sem_open("/forks", O_CREAT, 0644, session->num_philos);
+	session->eat_done = sem_open("/eat_done", O_CREAT,
+			0644, session->num_philos);
+	sem_wait(session->all_must_stop);
 	create_philos(session);
 	sem_close(session->death_lock);
 	sem_close(session->forks);

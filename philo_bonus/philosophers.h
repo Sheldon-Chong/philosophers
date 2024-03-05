@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
-/*   Updated: 2024/02/29 20:06:11 by shechong         ###   ########.fr       */
+/*   Updated: 2024/03/05 09:03:57 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct s_session
 	sem_t				*death_lock;
 	sem_t				*eat_done;
 	int					*philo_pid;
-	sem_t				*all_philos_must_die;
+	sem_t				*all_must_stop;
 }	t_session;
 
 typedef struct s_philo
@@ -55,14 +55,15 @@ typedef struct s_philo
 	int					pid;
 	int					id;
 	int					eat_count;
-	unsigned long long	time_to_die;
+	_Atomic uint64_t	lifespan;
 	t_session			*session;
 	sem_t				*read_lock;
+	char				status;
 }	t_philo;
 
 void				print_msg(char *msg, t_philo *philo,
 						t_session *session);
-void				philo(int pid, t_session *session, int i);
+void				philo(int pid, t_session *session, int id);
 int					ft_atoi(char *c);
 unsigned long long	get_time_milisec(void);
 int					ft_usleep(unsigned long long milisec);
