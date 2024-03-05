@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:37:41 by shechong          #+#    #+#             */
-/*   Updated: 2024/03/05 09:34:51 by shechong         ###   ########.fr       */
+/*   Updated: 2024/03/05 09:52:20 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ typedef struct s_session
 	int					time_to_sleep;
 	int					num_philo_must_eat;
 	unsigned long long	start_time;
-	sem_t				*go_lock;
 	char				program_status;
 	t_philo				*philos;
 	sem_t				*forks;
