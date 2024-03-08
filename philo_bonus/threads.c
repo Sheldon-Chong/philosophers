@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 10:36:27 by shechong          #+#    #+#             */
-/*   Updated: 2024/03/05 09:30:41 by shechong         ###   ########.fr       */
+/*   Updated: 2024/03/08 09:00:11 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ static void	philo_life(t_philo *philo, t_session *session)
 	if (session->num_philo_must_eat != -1 && philo->eat_count
 		>= session->num_philo_must_eat)
 		sem_post(philo->session->eat_done);
+	sem_wait(session->death_lock);
 	philo->lifespan = get_time_milisec() + session->time_to_die;
+	sem_post(session->death_lock);
 	ft_usleep(session->time_to_eat);
 	sem_post(session->forks);
 	sem_post(session->forks);
